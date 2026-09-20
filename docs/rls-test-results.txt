@@ -1,0 +1,65 @@
+PASS migration 202609100001_schema.sql
+PASS migration 202609100002_permissions.sql
+PASS migration 202609100003_rls.sql
+PASS migration 202609100004_rpc.sql
+PASS migration 202609100005_realtime_audit.sql
+PASS migration 202609100006_role_catalog.sql
+PASS migration 202609100007_administration.sql
+PASS migration 202609100008_profile.sql
+PASS migration 202609100009_chat_administration.sql
+PASS RLS enabled on every application table
+PASS guest sees only published public content
+PASS guest can see parishes
+PASS guest denied profiles
+PASS guest denied memberships
+PASS guest denied chat_messages
+PASS guest denied notifications
+PASS guest denied membership RPC
+PASS signup metadata cannot grant roles
+PASS member A cannot see private B, drafts or future posts
+PASS member only sees own membership
+PASS direct membership forgery denied
+PASS self promotion RPC denied
+PASS internal table inaccessible role_assignments
+PASS internal table inaccessible profile_private
+PASS internal table inaccessible audit_log
+PASS private profile owner RPC works
+PASS future birthday rejected
+PASS profile identity immutable
+PASS only co-parish display profiles visible
+PASS second parish denied
+PASS member cannot publish
+PASS restricted room hidden
+PASS send denied to restricted/foreign/channel 40000000-0000-0000-0000-000000000002
+PASS send denied to restricted/foreign/channel 40000000-0000-0000-0000-000000000003
+PASS send denied to restricted/foreign/channel 40000000-0000-0000-0000-000000000004
+PASS group message delivery and idempotent retry
+PASS direct message forgery denied
+PASS notifications recipient-only
+PASS notification ownership immutable
+PASS foreign notification cannot be marked read
+PASS parish admin rights scoped correctly
+PASS A admin cannot publish in B
+PASS post parish cannot be changed
+PASS parish admin cannot define roles
+PASS parish admin has no private profile table access
+PASS parish publish flag not directly mutable
+PASS foreign member cannot be added to restricted chat
+PASS authorized restricted chat invitation works
+PASS message moderation replaces body and is audited
+PASS parish admin denied global audit
+PASS approval parish creates pending membership
+PASS A admin cannot approve B applicant
+PASS super admin can approve applicant
+PASS custom role can grant one scoped permission
+PASS parish role cannot contain global permission
+PASS baseline roles protected from RPC changes
+PASS scoped role needs active matching membership
+PASS banned user cannot self reactivate
+PASS role revoke effective without new JWT
+PASS leave revokes private content, roles and closed-chat invitation
+PASS unique index prevents duplicate current membership
+PASS event cannot use another parish location
+PASS notifications queue exactly once
+PASS Realtime publication excludes all private tables
+RESULT: 64 checks passed. PGlite/PostgreSQL, auth.uid mocked. Live Auth/Realtime and parallel connections not tested.

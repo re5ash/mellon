@@ -1,0 +1,6 @@
+{
+  "SUPABASE_URL": "https://YOUR_PROJECT.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_REPLACE_ME",
+  "AUTH_REDIRECT_URL": "http://localhost:8080/",
+  "YANDEX_TILES_API_KEY": ""
+}

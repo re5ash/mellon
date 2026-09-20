@@ -1,0 +1,10 @@
+{
+  "external_email_enabled": true,
+  "mailer_autoconfirm": false,
+  "mailer_allow_unverified_email_sign_ins": false,
+  "mailer_secure_email_change_enabled": true,
+  "password_min_length": 12,
+  "mailer_otp_exp": 900,
+  "mailer_otp_length": 8,
+  "smtp_max_frequency": 60
+}

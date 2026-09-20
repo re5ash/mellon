@@ -1,0 +1,21 @@
+PASS migration preserves old personal data and visibility; new accounts start private
+PASS guest cannot read or save a profile, or access private table
+PASS read RPC returns only own private record
+PASS one RPC saves both records, trims names and returns fresh revisions
+PASS lost-response retry returns same values and versions without another write
+PASS stale edit cannot overwrite either half of the profile
+PASS server validates empty/long/null names, visibility, date and revisions atomically
+PASS client cannot choose another account, even with correct revisions
+PASS private visibility hides profile from same-parish member
+PASS opt-in exposes display identity only to active same-parish members
+PASS foreign and pending members cannot read opted-in directory entry
+PASS parish and super administrators cannot read another private profile via app grants
+PASS leaving parish immediately removes directory access without JWT renewal
+PASS public revision and identity cannot be forged or used to update another user
+PASS legacy direct display update invalidates stale combined save
+PASS legacy private RPC also invalidates stale combined save
+PASS personal fields can be cleared without changing role or membership
+PASS second-table failure rolls back first-table write
+PASS private data absent from realtime publication and audit metadata
+PASS revoking profile.self blocks read and write immediately
+RESULT: 20 profile checks passed. PostgreSQL/PGlite; auth.uid mocked; no parallel connection test.

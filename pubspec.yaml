@@ -1,0 +1,52 @@
+name: moy_prihod
+description: Modular Flutter and Supabase foundation for Mellon.
+publish_to: none
+version: 0.1.0+1
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+  flutter: '>=3.47.2'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: 3.4.3
+  go_router: 18.0.1
+  supabase_flutter: 2.17.2
+  shared_preferences: 2.5.5
+  file_selector: 1.1.0
+  flutter_map: 8.3.2
+  latlong2: ^0.9.1
+  geolocator: 14.0.3
+  url_launcher: 6.3.2
+  share_plus: 13.3.0
+  http: 1.6.0
+  crypto: 3.0.7
+  path_provider: 2.1.6
+  web: 1.1.1
+  video_player: 2.14.0
+dev_dependencies:
+  video_player_platform_interface: 6.9.0
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/themes/
+    # Loaded after the first frame; declaring it as a font blocks web startup.
+    - assets/fonts/NotoColorEmoji.ttf
+    - assets/fonts/Roboto-LICENSE.txt
+    - assets/map/yandex_logo_ru.png
+    - assets/map/alexander_nevsky.jpg
+    - assets/illustrations/club_welcome.png
+    - assets/illustrations/club_reference.png
+  fonts:
+    # CanvasKit otherwise fetches its default Roboto from fonts.gstatic.com.
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+    - family: PTSerif
+      fonts:
+        - asset: assets/fonts/PTSerif-Regular.ttf
+        - asset: assets/fonts/PTSerif-Bold.ttf
+          weight: 700

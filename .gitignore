@@ -1,0 +1,19 @@
+.dart_tool/
+.packages
+build/
+coverage/
+.env*
+!*.example
+config/*.json
+!config/*.example.json
+android/local.properties
+android/key.properties
+*.jks
+*.keystore
+.idea/
+.DS_Store
+node_modules/
+supabase/.temp/
+supabase/.branches/
+# Widget Preview related
+.widget_preview/

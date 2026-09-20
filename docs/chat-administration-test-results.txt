@@ -1,0 +1,22 @@
+PASS guest cannot call either administration RPC
+PASS member cannot list or create managed chats
+PASS parish administrator cannot act on foreign parish
+PASS create returns JSON object with server identity and private parish access
+PASS lost-response retry creates one room and one audit record
+PASS all validation occurs on server
+PASS account mismatch cannot save under a different session
+PASS direct insert/update and role-table writes remain blocked
+PASS update uses revision and supports identical retry without extra revision
+PASS missing edited room and foreign identifier never create or move a room
+PASS restricted chat update retains invitation access and original owner
+PASS channel creation and public directory order reflect stored values
+PASS member may send to group but cannot publish into channel
+PASS archive preserves history and blocks sending even for administrator
+PASS restore reveals same room and same history
+PASS custom chat-only role grants entry without parish or post administration
+PASS channel publisher permission is independent from room management
+PASS administration pagination is bounded and does not repeat identifiers
+PASS revocation is enforced without refreshing a JWT
+PASS foreign member cannot read parish rooms or messages
+PASS audit metadata excludes chat content and RPC grants exclude guests
+RESULT: 21 chat administration checks passed. PostgreSQL/PGlite; mocked auth.uid; no parallel connection or live PostgREST test.

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Mellon — новости, события и помощь в приходах вашего города.">
+  <meta name="theme-color" content="#F7FAFD" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111B25" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mellon">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Mellon</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;background:#F7FAFD;color:#172E41}
+    body{min-height:100svh;height:100dvh;font-family:system-ui,sans-serif}
+    @media(prefers-color-scheme:dark){html,body{background:#111B25;color:#E0EBF5}}
+  </style>
+<!-- MP_INPUT_DIAGNOSTIC_V1_BEGIN -->
+<script id="mp-input-diagnostic-v1">
+/* Temporary, opt-in localhost-only input diagnostics. No values or traffic are read. */
+(() => {
+  'use strict';
+  if (!['localhost', '127.0.0.1', '[::1]'].includes(location.hostname) ||
+      new URLSearchParams(location.search).get('input_check') !== '1') return;
+  const sourceInfo = {"form": {"revision": "stability_fix_83", "sha256": "d0bb20b55524d800a8c5bf45f11eba80db89ed75b548a93b1e81e8cb73a15f31"}, "controller": {"revision": "stability_fix_83", "sha256": "f680f803d1a921d8e75d7c4273588bbc9cc4a3c42082ca55d6f5871ad22d4782"}, "regression_tests": {"revision": "stability_fix_83", "sha256": "a75fe467abd553a0aa62d3ef7a27ac49ced47b6f5705df2aad4cf6461c578d48"}};
+  const started = performance.now();
+  const ids = new WeakMap();
+  const recentFields = [];
+  const events = [];
+  const counts = { keydown: 0, beforeinput: 0, input: 0, pointerdown: 0,
+    focusin: 0, focusout: 0, error: 0, unhandledrejection: 0 };
+  let nextId = 0, host, panel, output, captured, probeEvents = 0;
+  let probeKeyEvents = 0, elapsedTicks = 0, lastTick = performance.now();
+  let maxVisibleGapMs = 0;
+  const ms = () => Math.round(performance.now() - started);
+  const isField = el => el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
+  function active() {
+    let el = document.activeElement;
+    while (el && el.shadowRoot && el.shadowRoot.activeElement) el = el.shadowRoot.activeElement;
+    return el;
+  }
+  function kind(el) {
+    if (!el) return 'none';
+    const tag = el.tagName;
+    return ['INPUT', 'TEXTAREA', 'BODY', 'HTML', 'BUTTON', 'CANVAS', 'DIV',
+      'FLT-GLASS-PANE', 'FLT-VIEW', 'FLT-SEMANTICS', 'FLT-TEXT-EDITING-HOST'].includes(tag)
+      ? tag.toLowerCase() : 'other';
+  }
+  function id(el) {
+    if (!ids.has(el)) ids.set(el, ++nextId);
+    return ids.get(el);
+  }
+  function remember(el) {
+    if (!isField(el)) return;
+    if (!recentFields.includes(el)) recentFields.push(el);
+    if (recentFields.length > 12) recentFields.shift();
+  }
+  function brief(el) {
+    const result = { kind: kind(el) };
+    if (!el || !(el instanceof Element)) return result;
+    result.id = id(el);
+    if (isField(el)) {
+      result.connected = el.isConnected;
+      result.disabled = el.disabled;
+      result.readOnly = el.readOnly;
+    }
+    return result;
+  }
+  function fieldInfo(el) {
+    const result = { kind: kind(el) };
+    if (!el || !(el instanceof Element)) return result;
+    result.id = id(el);
+    if (!isField(el)) return result;
+    const style = getComputedStyle(el);
+    const rect = el.getBoundingClientRect();
+    const type = el instanceof HTMLInputElement ? el.type : 'textarea';
+    return { ...result,
+      type: ['text', 'password', 'email', 'tel', 'number', 'hidden', 'textarea'].includes(type)
+        ? type : 'other',
+      connected: el.isConnected,
+      focused: el === active(),
+      disabled: el.disabled || el.matches(':disabled'),
+      readOnly: el.readOnly,
+      inertAncestor: Boolean(el.closest('[inert]')),
+      pointerEventsNone: style.pointerEvents === 'none',
+      displayNone: style.display === 'none',
+      visibilityHidden: style.visibility === 'hidden',
+      opacityZero: Number(style.opacity) === 0,
+      box: [rect.x, rect.y, rect.width, rect.height].map(Math.round),
+    };
+  }
+  function keyClass(event) {
+    if (event.ctrlKey || event.metaKey) return 'shortcut';
+    if (['Backspace', 'Delete'].includes(event.key)) return 'delete';
+    if (event.key === 'Enter') return 'enter';
+    if (event.key === 'Tab') return 'tab';
+    if (typeof event.key === 'string' && event.key.length === 1) return 'text';
+    return 'other';
+  }
+  function record(event) {
+    if (host && event.composedPath().includes(host)) return;
+    if (panel && !panel.hidden) return;
+    const target = event.composedPath()[0];
+    remember(target);
+    counts[event.type]++;
+    const row = { atMs: ms(), event: event.type, target: brief(target),
+      focused: brief(active()) };
+    if (event.type === 'keydown') row.keyClass = keyClass(event);
+    events.push(row);
+    if (events.length > 24) events.shift();
+    // Inspect cancellation after dispatch; never prevent app events ourselves.
+    queueMicrotask(() => { row.prevented = event.defaultPrevented; });
+  }
+  for (const name of ['keydown', 'beforeinput', 'input', 'pointerdown', 'focusin', 'focusout']) {
+    window.addEventListener(name, record, { capture: true, passive: true });
+  }
+  // Count failures, without reading exception text, stacks, filenames, or URLs.
+  window.addEventListener('error', () => { counts.error++; });
+  window.addEventListener('unhandledrejection', () => { counts.unhandledrejection++; });
+  setInterval(() => {
+    const now = performance.now();
+    if (document.visibilityState === 'visible') {
+      maxVisibleGapMs = Math.max(maxVisibleGapMs, Math.round(now - lastTick));
+    }
+    lastTick = now;
+    elapsedTicks++;
+  }, 1000);
+  document.addEventListener('visibilitychange', () => { lastTick = performance.now(); });
+  function fields() {
+    const found = new Set(recentFields);
+    const roots = [document];
+    let scanned = 0;
+    while (roots.length && scanned < 20000) {
+      for (const el of roots.pop().querySelectorAll('*')) {
+        if (++scanned > 20000) break;
+        if (el === host) continue;
+        if (isField(el)) found.add(el);
+        if (el.shadowRoot) roots.push(el.shadowRoot);
+      }
+    }
+    return Array.from(found).slice(-24).map(fieldInfo);
+  }
+  function snapshot() {
+    const resourcePaths = performance.getEntriesByType('resource').map(entry => {
+      try { return new URL(entry.name).pathname; } catch (_) { return ''; }
+    });
+    const debugCompiler = resourcePaths.some(path => /(?:dart_sdk|ddc_module_loader)\.js$/.test(path));
+    const chromeVersion = /(?:Chrome|Chromium)\/([\d.]+)/.exec(navigator.userAgent);
+    return {
+      diagnostic: 'MP_INPUT_DIAG_V1',
+      source: sourceInfo,
+      browser: chromeVersion ? 'Chrome ' + chromeVersion[1] : 'other',
+      debugCompilerSeen: debugCompiler,
+      atMs: ms(),
+      pageFocusedBeforeOpening: document.hasFocus(),
+      visibility: document.visibilityState,
+      heartbeatTicks: elapsedTicks,
+      maxVisibleGapMs,
+      activeBeforeOpening: fieldInfo(active()),
+      fieldsBeforeOpening: fields(),
+      countsBeforeOpening: { ...counts },
+      lastEventsBeforeOpening: events.map(row => ({ ...row })),
+    };
+  }
+  function renderReport() {
+    if (captured) output.value = JSON.stringify({ ...captured,
+      nativeProbe: { keydownEvents: probeKeyEvents, inputEvents: probeEvents } }, null, 2);
+  }
+  function mount() {
+    host = document.createElement('aside');
+    host.id = 'mp-input-diagnostic';
+    host.style.cssText = 'position:fixed;z-index:2147483647;right:12px;bottom:12px;pointer-events:auto';
+    const root = host.attachShadow({ mode: 'closed' });
+    const style = document.createElement('style');
+    style.textContent = `
+      :host { font:14px/1.45 system-ui,sans-serif;color:#122d43;color-scheme:light; }
+      * { box-sizing:border-box; } [hidden] { display:none!important; }
+      button { font:inherit;cursor:pointer;border:1px solid #1768a8;border-radius:10px;
+        background:#1768a8;color:white;padding:11px 15px;min-height:44px; }
+      #panel { position:fixed;inset:16px;margin:auto;max-width:620px;max-height:670px;
+        padding:20px;background:#fff;border:2px solid #1768a8;border-radius:16px;
+        box-shadow:0 10px 50px #0003;overflow:auto; }
+      h2 { margin:0 0 12px;font-size:22px; } p { margin:8px 0 12px; }
+      label { display:block;font-weight:600;margin:10px 0 6px; }
+      input,textarea { font:inherit;width:100%;padding:10px;background:white;color:#122d43;
+        border:1px solid #849cb0;border-radius:8px; }
+      textarea { height:205px;font:11px/1.4 ui-monospace,monospace;resize:vertical; }
+      #actions { display:flex;gap:8px;flex-wrap:wrap;margin-top:14px; }
+      #close { color:#1768a8;background:#fff; } #status { min-height:22px; }
+    `;
+    root.append(style);
+    const launcher = document.createElement('button');
+    launcher.textContent = 'Проверка ввода';
+    launcher.type = 'button';
+    panel = document.createElement('section');
+    panel.id = 'panel';
+    panel.hidden = true;
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', 'Проверка ввода');
+    panel.innerHTML = `
+      <h2>Проверка ввода</h2>
+      <p>Состояние формы зафиксировано до открытия этого окна.</p>
+      <label for="probe">Проверочное поле</label>
+      <input id="probe" type="text" autocomplete="off" spellcheck="false">
+      <p>Попробуйте набрать здесь <b>abc</b> и стереть одну букву.
+         Затем нажмите «Скопировать отчёт» и отправьте его в чат.</p>
+      <p>В отчёте только состояние полей и счётчики событий. Почта, пароли,
+         токены и введённые символы не записываются. Автоматической отправки нет.</p>
+      <label for="report">Технический отчёт</label>
+      <textarea id="report" readonly spellcheck="false"></textarea>
+      <div id="actions"><button id="copy" type="button">Скопировать отчёт</button>
+      <button id="close" type="button">Закрыть</button></div>
+      <p id="status" role="status"></p>
+    `;
+    output = panel.querySelector('#report');
+    const status = panel.querySelector('#status');
+    const probe = panel.querySelector('#probe');
+    probe.addEventListener('input', () => { probeEvents++; renderReport(); });
+    probe.addEventListener('keydown', () => { probeKeyEvents++; renderReport(); });
+    let pointerSnapshot;
+    launcher.addEventListener('pointerdown', event => {
+      pointerSnapshot = snapshot();
+      // Only the diagnostic button: preserve original focus until the snapshot exists.
+      event.preventDefault();
+    });
+    launcher.addEventListener('click', () => {
+      captured = pointerSnapshot || snapshot();
+      pointerSnapshot = undefined;
+      probeEvents = 0; probeKeyEvents = 0; probe.value = '';
+      status.textContent = '';
+      panel.hidden = false; launcher.hidden = true;
+      renderReport();
+    });
+    panel.querySelector('#close').addEventListener('click', () => {
+      panel.hidden = true; launcher.hidden = false;
+    });
+    panel.querySelector('#copy').addEventListener('click', async () => {
+      renderReport();
+      const report = output.value;
+      try {
+        await navigator.clipboard.writeText(report);
+        status.textContent = 'Отчёт скопирован. Вставьте его в чат.';
+      } catch (_) {
+        output.focus(); output.select();
+        status.textContent = 'Отчёт выделен. Нажмите ⌘C на Mac или Ctrl+C на Windows.';
+      }
+    });
+    root.append(launcher, panel);
+    document.body.append(host);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
+  else mount();
+})();
+
+</script>
+<!-- MP_INPUT_DIAGNOSTIC_V1_END -->
+  <style id="mellon-netlify-badge-position">
+    /* The public badge is injected by Netlify after the page is served.
+       Move its outer frame; retain Netlify's size, clipping and controls.
+       Leave the 56px Flutter app bar and iPhone safe area available. */
+    iframe#nl-badge-frame {
+      top: calc(env(safe-area-inset-top, 0px) + 56px) !important;
+      left: env(safe-area-inset-left, 0px) !important;
+      right: auto !important;
+      bottom: auto !important;
+      max-width: calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    }
+  </style>
+</head>
+<body>
+  <!-- MELLON_SILENT_START_V1 -->
+  <noscript>Для работы приложения необходимо включить JavaScript.</noscript>
+  <script>
+    // Older Supabase emails can return an error outside the Flutter hash route.
+    // Do not display or log the provider's URL/error description.
+    const authUrl = new URL(window.location.href);
+    const authFragment = new URLSearchParams(authUrl.hash.slice(1));
+    if (authUrl.searchParams.has('error') || authFragment.has('error')) {
+      window.history.replaceState(null, '', authUrl.pathname + '#/auth/verify');
+    }
+
+  </script>
+  <script src="mellon_chat_gestures.js?v=20260914-1"></script>
+  <script src="mellon_startup.js"></script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

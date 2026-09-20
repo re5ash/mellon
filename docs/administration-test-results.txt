@@ -1,0 +1,20 @@
+PASS guest cannot invoke any administration RPC
+PASS ordinary member sees no managed parishes and cannot write
+PASS parish admin listing excludes foreign and hidden parishes
+PASS parish admin cannot create a parish or inspect foreign applicants
+PASS reviewer gets applicant display names without a private profile directory
+PASS request cursor handles identical timestamps without duplicate rows
+PASS parish admin edit preserves publication; cannot publish a parish
+PASS scoped author creates draft once; identity comes from authenticated session
+PASS unpublished draft hidden from active member
+PASS publish protects against stale writes and validates fields on server
+PASS pending applicant cannot read private publication
+PASS approval removes request; re-review rejected; approved member gains access
+PASS super admin create retry does not duplicate city, parish or audit entry
+PASS parish listing cursor is bounded and does not repeat records
+PASS another administrator cannot claim an existing create request
+PASS custom permission role enables publishing without membership review
+PASS guest sees public publication only after explicit publication
+PASS archive removes publication from public feed
+PASS revoked permission immediately blocks RPC and administrative listing
+RESULT: 19 administration checks passed. PostgreSQL/PGlite; auth.uid mocked; no parallel connection test.

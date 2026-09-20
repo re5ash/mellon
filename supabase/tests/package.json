@@ -1,0 +1,11 @@
+{
+  "name": "moy-prihod-db-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node rls_integration.mjs && node administration_integration.mjs && node profile_integration.mjs && node chat_administration_integration.mjs && node community_integration.mjs && node club_registration_integration.mjs && node club_applications_integration.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8"
+  }
+}
